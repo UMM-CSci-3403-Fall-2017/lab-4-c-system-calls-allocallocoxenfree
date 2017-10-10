@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
 
@@ -25,12 +26,16 @@ int copy_non_vowels(int num_chars, char* in_buf, char* out_buf) {
 	int counter = 0;
 	for (int i = 0; i < num_chars; i++)
 	{
+		if(in_buf[i] == '\0'){
+			break;
+		}
 		if (!is_vowel(in_buf[i]))
 		{
 			out_buf[counter] = in_buf[i];
 			counter++;
 		}	
 	}
+//	out_buf[counter] = '\0';
 	return counter;
 }
 
@@ -41,26 +46,49 @@ void disemvowel(FILE* inputFile, FILE* outputFile) {
      * in a buffer of data, copy the non-vowels to the output buffer, and
      * use fwrite to write that out. 
      */
-//	FILE *fp;
 
-	char buffer[10000];
 
-	//fp = fopen(inputFile, "r");
-	fread(buffer, (int) sizeof(char), 10000, inputFile);
-	buffer[9999] = '\0';
-       	printf("%s\n", buffer);	
+	char buffer[1024];
+	char buffer2[1024];
 
+	if (!inputFile && !outputFile) {
+                fread(buffer, 1, sizeof(buffer), stdin);
+                int final_size = copy_non_vowels(sizeof(buffer), buffer, buffer2);
+                fwrite(buffer2, 1, final_size, stdout);
+        }
+
+
+	//possible issue with fread (returns a -1 possibly when done, and that might be printed as well.)
+	if (inputFile && !outputFile) {
+	        fread(buffer, 1, sizeof(buffer), inputFile);
+        	int final_size = copy_non_vowels(sizeof(buffer), buffer, buffer2);
+		fwrite(buffer2, 1, final_size, stdout);
+	}
+
+        if (inputFile && outputFile) {
+                fread(buffer, 1, sizeof(buffer), inputFile);
+                int final_size = copy_non_vowels(sizeof(buffer), buffer, buffer2);
+                fwrite(buffer2, 1, final_size, outputFile);
+        }
+
+//	fread(buffer,  sizeof(buffer), sizeof(char), inputFile);
+//	buffer[sizeof(buffer) -1] = '\0';
+//       	printf("%s\n", buffer);	
+//	fwrite(buffer, sizeof(buffer), sizeof(char), outputFile);
 
 }
 
 int main(int argc, char *argv[]) { 	    
-    FILE *inputFile = fopen(argv[0], "r"); 
-    FILE *outputFile = fopen("test_output.txt", "w");
+    FILE *inputFile = fopen(argv[1], "r"); 
+    FILE *outputFile = fopen(argv[2], "w+");
 
     // Code that processes the command line arguments 
     // and sets up inputFile and outputFile.
 
     disemvowel(inputFile, outputFile);
+
+    if(inputFile) fclose(inputFile);
+    if(outputFile) fclose(outputFile);
 
     return 0; 
 }
