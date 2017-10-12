@@ -51,25 +51,24 @@ void disemvowel(FILE* inputFile, FILE* outputFile) {
 	char buffer[1024];
 	char buffer2[1024];
 
-	if (!inputFile && !outputFile) {
-                fread(buffer, 1, sizeof(buffer), stdin);
+	//possible issue with fread (returns a -1 possibly when done, and that might be printed as well.)
+//	if (inputFile && !outputFile) {
+//	        fread(buffer, 1, sizeof(buffer), inputFile);
+//        	int final_size = copy_non_vowels(sizeof(buffer), buffer, buffer2);
+//		fwrite(buffer2, 1, final_size, stdout);
+//	}
+
+        if (inputFile && outputFile) {
+                printf("aaaaaaaaaaassaw");
+		fread(buffer, 1, sizeof(buffer), inputFile);
+                int final_size = copy_non_vowels(sizeof(buffer), buffer, buffer2);
+                fwrite(buffer2, 1, final_size, outputFile);
+        } else {
+		fread(buffer, 1, sizeof(buffer), inputFile);
                 int final_size = copy_non_vowels(sizeof(buffer), buffer, buffer2);
                 fwrite(buffer2, 1, final_size, stdout);
         }
 
-
-	//possible issue with fread (returns a -1 possibly when done, and that might be printed as well.)
-	if (inputFile && !outputFile) {
-	        fread(buffer, 1, sizeof(buffer), inputFile);
-        	int final_size = copy_non_vowels(sizeof(buffer), buffer, buffer2);
-		fwrite(buffer2, 1, final_size, stdout);
-	}
-
-        if (inputFile && outputFile) {
-                fread(buffer, 1, sizeof(buffer), inputFile);
-                int final_size = copy_non_vowels(sizeof(buffer), buffer, buffer2);
-                fwrite(buffer2, 1, final_size, outputFile);
-        }
 
 //	fread(buffer,  sizeof(buffer), sizeof(char), inputFile);
 //	buffer[sizeof(buffer) -1] = '\0';
@@ -79,14 +78,23 @@ void disemvowel(FILE* inputFile, FILE* outputFile) {
 }
 
 int main(int argc, char *argv[]) { 	    
-    FILE *inputFile = fopen(argv[1], "r"); 
-    FILE *outputFile = fopen(argv[2], "w+");
+    FILE *inputFile = fopen(argv[1], "r");
+    FILE *outputFile;
+    if(argc == 2){
+	    outputFile = fopen(argv[2], "w+");
+    }  
 
+    if (!outputFile){
+	printf("I'm the conductor of the poop train\n");
+    }
     // Code that processes the command line arguments 
     // and sets up inputFile and outputFile.
 
-    disemvowel(inputFile, outputFile);
-
+    if(inputFile){
+    	disemvowel(inputFile, outputFile);
+    } else {
+	disemvowel(stdin, outputFile);
+    }
     if(inputFile) fclose(inputFile);
     if(outputFile) fclose(outputFile);
 
