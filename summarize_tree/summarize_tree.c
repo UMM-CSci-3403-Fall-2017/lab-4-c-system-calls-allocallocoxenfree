@@ -18,10 +18,14 @@ bool is_dir(const char* path) {
    */
 	struct stat *buf = calloc(1024, sizeof(int));
 	if (stat(path, buf) == 0) {
-		return S_ISDIR(buf->st_mode);
-	} else {
-		return false;
+		if(S_ISDIR(buf->st_mode)){
+			free(buf);
+			return true;	
+		}
 	}
+		free(buf);
+		return false;
+	
 }
 
 /* 
